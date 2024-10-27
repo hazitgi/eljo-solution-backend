@@ -6,30 +6,42 @@ import {
   CreateDateColumn,
 } from 'typeorm';
 
-@ObjectType() // This decorator makes the class a GraphQL object type
+@ObjectType()
 @Entity('users')
 export class User {
-  @Field() // This decorator exposes the field to GraphQL
+  @Field(() => Number)
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field()
+  @Field(() => String)
   @Column({ type: 'varchar', length: 255 })
   name: string;
 
-  @Field()
+  @Field(() => String)
   @Column({ type: 'varchar', length: 255 })
   email: string;
 
-  @Field({ nullable: true })
+  @Field(() => String, {nullable: true })
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
-  @Field({})
-  @Column({ type: 'enum', enum: ['admin', 'qc_inspector'] })
+  @Field(() => String, { nullable: true })
+  @Column({ type: 'varchar', length: 255, nullable: true })
+  resetToken: string | null;
+
+  @Field(() => Date, { nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
+  resetTokenExpiry: Date | null;
+
+  @Field(() => String)
+  @Column({ 
+    type: 'enum', 
+    enum: ['admin', 'qc_inspector'],
+    default: 'qc_inspector'
+  })
   role: 'admin' | 'qc_inspector';
 
-  @Field()
-  @CreateDateColumn()
+  @Field(() => Date)
+  @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
 }
