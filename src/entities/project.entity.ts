@@ -1,5 +1,10 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+} from 'typeorm';
 
 @ObjectType()
 @Entity('projects')
@@ -24,4 +29,3 @@ export class Project {
   @CreateDateColumn()
   created_at: Date;
 }
-

@@ -21,7 +21,7 @@ export class User {
   @Column({ type: 'varchar', length: 255 })
   email: string;
 
-  @Field(() => String, {nullable: true })
+  @Field(() => String, { nullable: true })
   @Column({ type: 'varchar', length: 255 })
   password: string;
 
@@ -34,10 +34,10 @@ export class User {
   resetTokenExpiry: Date | null;
 
   @Field(() => String)
-  @Column({ 
-    type: 'enum', 
+  @Column({
+    type: 'enum',
     enum: ['admin', 'qc_inspector'],
-    default: 'qc_inspector'
+    default: 'qc_inspector',
   })
   role: 'admin' | 'qc_inspector';
 

@@ -1,5 +1,11 @@
 import { ObjectType, Field, Int } from '@nestjs/graphql';
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  ManyToOne,
+} from 'typeorm';
 import { QCTask } from './qc-task.entity';
 
 @ObjectType()
@@ -33,4 +39,3 @@ export class File {
   @CreateDateColumn()
   created_at: Date;
 }
-

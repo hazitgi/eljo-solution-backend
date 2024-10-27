@@ -7,7 +7,6 @@ import { GraphQLModule } from '@nestjs/graphql';
 import { ApolloDriver, ApolloDriverConfig } from '@nestjs/apollo';
 import { DatabaseModule } from './database/database.module';
 
-
 @Module({
   imports: [
     DatabaseModule,
@@ -19,9 +18,9 @@ import { DatabaseModule } from './database/database.module';
       driver: ApolloDriver,
       autoSchemaFile: true,
       playground: true,
+      context: ({ req }) => ({ req }),
     }),
     AuthModule,
-
   ],
   controllers: [AppController],
   providers: [AppService],
