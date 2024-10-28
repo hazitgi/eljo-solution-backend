@@ -13,12 +13,11 @@ import { ProjectsModule } from './projects/projects.module';
 import { QcModule } from './qc/qc.module';
 import { FilesModule } from './files/files.module';
 
-
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
-      serveRoot: '/static', 
+      serveRoot: '/static',
     }),
     DatabaseModule,
     ConfigModule.forRoot({

@@ -1,4 +1,10 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Param } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  UseInterceptors,
+  UploadedFile,
+  Param,
+} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 
@@ -17,7 +23,10 @@ export class FilesController {
       }),
     }),
   )
-  uploadFile(@UploadedFile() file: Express.Multer.File, @Param('qcTaskId') qcTaskId: string) {
+  uploadFile(
+    @UploadedFile() file: Express.Multer.File,
+    @Param('qcTaskId') qcTaskId: string,
+  ) {
     return {
       url: `http://localhost:3000/static/images/${qcTaskId}-${file.filename}`,
     };

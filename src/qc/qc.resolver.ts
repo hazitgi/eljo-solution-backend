@@ -1,4 +1,11 @@
-import { Resolver, Query, Mutation, Args, ResolveField, Parent } from '@nestjs/graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
 import { QCTask } from '../entities/qc-task.entity';
 import { QCTaskService } from './qc.service';
 import { CreateQCTaskInput } from './dto/create-qc.input';
@@ -23,7 +30,7 @@ export class QCTaskResolver {
   @Mutation(() => QCTask)
   async updateQCTaskStatus(
     @Args('id') id: number,
-    @Args('status') status: string
+    @Args('status') status: string,
   ) {
     return this.qcTaskService.updateStatus(id, status);
   }

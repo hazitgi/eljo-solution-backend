@@ -51,7 +51,6 @@ export class ProjectService {
       status: input.status || ProjectStatus.PENDING, // Ensure status is a ProjectStatus enum
     });
     return this.projectRepository.save(project);
-    
   }
 
   async update(id: number, input: UpdateProjectInput): Promise<Project> {
@@ -98,15 +97,14 @@ export class ProjectService {
 
   async updateStatus(id: number, status: string): Promise<Project> {
     const project = await this.findOne(id);
-    
+
     if (!(status in ProjectStatus)) {
       throw new Error(`Invalid status: ${status}`);
     }
-  
+
     project.status = status as ProjectStatus;
     return this.projectRepository.save(project);
   }
-  
 
   remove(id: number) {
     return this.projectRepository.delete(id);

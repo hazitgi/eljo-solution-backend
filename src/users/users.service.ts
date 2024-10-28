@@ -34,7 +34,7 @@ export class UsersService {
         ...createUserInput,
         password: hashedPassword,
       });
-      
+
       return await this.userRepository.save(user);
     } catch (error) {
       this.logger.error(`Failed to create user: ${error.message}`, error.stack);

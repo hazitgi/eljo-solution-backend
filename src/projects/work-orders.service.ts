@@ -10,7 +10,7 @@ export class WorkOrdersService {
   constructor(
     @InjectRepository(WorkOrder)
     private workOrdersRepository: Repository<WorkOrder>,
-    @InjectRepository(Project) 
+    @InjectRepository(Project)
     private projectRepository: Repository<Project>,
   ) {}
 
@@ -27,21 +27,32 @@ export class WorkOrdersService {
   }
 
   async create(createWorkOrderDto: CreateWorkOrderDto) {
-    const project = await this.projectRepository.findOne({ where: { id: createWorkOrderDto.projectId } });
+    const project = await this.projectRepository.findOne({
+      where: { id: createWorkOrderDto.projectId },
+    });
     if (!project) {
-        throw new Error('Project not found');
+      throw new Error('Project not found');
     }
-    createWorkOrderDto.work_order_number = this.buildWorkOrdertNumber(project);
-    
+
+    const lastWorkOrder = await this.workOrdersRepository.find({
+      select: ['id'],
+      order: { id: 'DESC' }, // Sort by id in descending order
+      take: 1, // Limit to 1 result
+    });
+
+    createWorkOrderDto.work_order_number = this.buildWorkOrdertNumber(
+      project,
+      lastWorkOrder[0],
+    );
+
     // Create workOrder and set the project
     const workOrder = this.workOrdersRepository.create({
-        ...createWorkOrderDto,
+      ...createWorkOrderDto,
     });
-    
+
     const ordetData = await this.workOrdersRepository.save(workOrder);
     return ordetData;
-}
-
+  }
 
   async update(id: number, updateWorkOrderDto: CreateWorkOrderDto) {
     await this.workOrdersRepository.update(id, updateWorkOrderDto);
@@ -52,13 +63,15 @@ export class WorkOrdersService {
     return this.workOrdersRepository.delete(id);
   }
 
-
-  buildWorkOrdertNumber({
-    project_name,
-  }: {
-    project_name: string;
-  }): string {
-    const orderNumber = `${project_name}-${new Date().toISOString().substring(0, 10)}`;
+  buildWorkOrdertNumber(
+    project: Project,
+    lastWorkOrder: WorkOrder | null,
+  ): string {
+    // Replace spaces with hyphens in project_name
+    const project_name = project.project_name.replace(/\s+/g, '-');
+    let id = lastWorkOrder ? lastWorkOrder.id : 0;
+    id = ++id;
+    const orderNumber = `WO-${project_name}-${id}`;
     return orderNumber;
   }
 }

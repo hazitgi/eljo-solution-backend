@@ -10,7 +10,9 @@ export class UsersResolver {
   constructor(private readonly usersService: UsersService) {}
 
   @Mutation(() => User)
-  async createUser(@Args('createUserDto') createUserDto: CreateUserDto): Promise<User> {
+  async createUser(
+    @Args('createUserDto') createUserDto: CreateUserDto,
+  ): Promise<User> {
     return this.usersService.create(createUserDto);
   }
 
@@ -25,7 +27,10 @@ export class UsersResolver {
   }
 
   @Mutation(() => User)
-  async updateUser(@Args('id') id: number, @Args('updateUserDto') updateUserDto: UpdateUserDto): Promise<User> {
+  async updateUser(
+    @Args('id') id: number,
+    @Args('updateUserDto') updateUserDto: UpdateUserDto,
+  ): Promise<User> {
     return this.usersService.update(id, updateUserDto);
   }
 

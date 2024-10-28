@@ -8,7 +8,7 @@ import { CreateQCTaskInput } from './dto/create-qc.input';
 export class QCTaskService {
   constructor(
     @InjectRepository(QCTask)
-    private qcTaskRepository: Repository<QCTask>
+    private qcTaskRepository: Repository<QCTask>,
   ) {}
 
   async create(input: CreateQCTaskInput): Promise<QCTask> {
@@ -18,7 +18,7 @@ export class QCTaskService {
 
   async findAll(): Promise<QCTask[]> {
     return this.qcTaskRepository.find({
-      relations: ['work_order', 'assignee']
+      relations: ['work_order', 'assignee'],
     });
   }
 
