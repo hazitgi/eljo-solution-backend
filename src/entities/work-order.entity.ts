@@ -21,7 +21,7 @@ export class WorkOrder {
   work_order_number: string;
 
   @Field(() => Project)
-  @ManyToOne(() => Project, (project) => project.id)
+  @ManyToOne(() => Project, (project) => project.id, {onDelete: 'CASCADE' })
   project: Project;
 
   @Field()

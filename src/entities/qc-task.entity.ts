@@ -18,7 +18,7 @@ export class QCTask {
   id: number;
 
   @Field(() => WorkOrder)
-  @ManyToOne(() => WorkOrder, (workOrder) => workOrder.id)
+  @ManyToOne(() => WorkOrder, (workOrder) => workOrder.id, {onDelete: 'CASCADE' })
   work_order: WorkOrder;
 
   @Field()
@@ -26,7 +26,7 @@ export class QCTask {
   qc_type: string;
 
   @Field(() => User)
-  @ManyToOne(() => User, (user) => user.id)
+  @ManyToOne(() => User, (user) => user.id, {onDelete: 'CASCADE' })
   assignee: User;
 
   @Field()

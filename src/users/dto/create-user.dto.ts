@@ -1,5 +1,13 @@
-import { InputType, Field } from '@nestjs/graphql';
+import { InputType, Field, registerEnumType } from '@nestjs/graphql';
 import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+
+export enum Role {
+  ADMIN = 'admin',
+  QC_INSPECTOR = 'qc_inspector',
+}
+registerEnumType(Role, {
+  name: 'Role', // This name is used in the GraphQL schema
+});
 
 @InputType()
 export class CreateUserDto {
@@ -13,13 +21,13 @@ export class CreateUserDto {
   @IsNotEmpty()
   email: string;
 
-  @Field({ nullable: true })
+  @Field()
   @IsString()
-  @IsOptional()
-  password?: string;
+  @IsNotEmpty()
+  password: string;
 
-  @Field({ nullable: true })
+  @Field(() => Role)
   @IsString()
   @IsOptional()
-  role?: 'admin' | 'qc_inspector';
+  role: Role | null = Role.QC_INSPECTOR;
 }

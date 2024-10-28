@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Project } from '../entities/project.entity';
-import { CreateProjectInput } from './dto/create-project.dto';
+import { CreateProjectInput, ProjectStatus } from './dto/create-project.dto';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { FindOptions } from 'typeorm';
 
@@ -35,6 +35,7 @@ export class ProjectService {
 
   async create(input: CreateProjectInput): Promise<Project> {
     // Check if project number already exists
+    input.project_number = this.buildProjectNumber(input);
     const existingProject = await this.projectRepository.findOne({
       where: { project_number: input.project_number },
     });
@@ -45,15 +46,12 @@ export class ProjectService {
       );
     }
 
-    input.project_number = this.buildProjectNumber(input);
-
-    // Create new project
     const project = this.projectRepository.create({
       ...input,
-      status: input.status || 'pending',
+      status: input.status || ProjectStatus.PENDING, // Ensure status is a ProjectStatus enum
     });
-
     return this.projectRepository.save(project);
+    
   }
 
   async update(id: number, input: UpdateProjectInput): Promise<Project> {
@@ -100,9 +98,15 @@ export class ProjectService {
 
   async updateStatus(id: number, status: string): Promise<Project> {
     const project = await this.findOne(id);
-    project.status = status;
+    
+    if (!(status in ProjectStatus)) {
+      throw new Error(`Invalid status: ${status}`);
+    }
+  
+    project.status = status as ProjectStatus;
     return this.projectRepository.save(project);
   }
+  
 
   remove(id: number) {
     return this.projectRepository.delete(id);

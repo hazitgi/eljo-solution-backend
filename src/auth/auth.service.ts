@@ -30,6 +30,7 @@ export class AuthService {
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userRepository.findOne({ where: { email } });
+    console.log("🚀 ~ AuthService ~ validateUser ~ user:", user)
     if (user && (await bcrypt.compare(password, user.password))) {
       const { password, ...result } = user;
       return result;
@@ -38,7 +39,9 @@ export class AuthService {
   }
 
   async login(email: string, password: string) {
+    console.log("🚀 ~ AuthService ~ login ~ email, password:", email, password)
     const user = await this.validateUser(email, password);
+    console.log("🚀 ~ AuthService ~ login ~ user:", user)
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }

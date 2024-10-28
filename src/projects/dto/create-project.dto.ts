@@ -23,7 +23,7 @@ registerEnumType(ProjectStatus, {
 
 @InputType()
 export class CreateProjectInput {
-  @Field({ nullable: true })
+
   project_number: string;
 
   @Field()

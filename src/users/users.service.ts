@@ -1,41 +1,111 @@
 // users.service.ts
-import { Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../entities/user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { FindOneOptions } from 'typeorm';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
   constructor(
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async create(createUserDto: CreateUserDto): Promise<User> {
-    const user = this.userRepository.create(createUserDto);
-    return await this.userRepository.save(user);
+  async create(createUserInput: CreateUserDto): Promise<User> {
+    try {
+      const existingUser = await this.userRepository.findOneBy({
+        email: createUserInput.email,
+      });
+      if (existingUser) {
+        throw new ConflictException('User with this email already exists');
+      }
+      const hashedPassword = await bcrypt.hash(createUserInput.password, 10);
+      const user = this.userRepository.create({
+        ...createUserInput,
+        password: hashedPassword,
+      });
+      
+      return await this.userRepository.save(user);
+    } catch (error) {
+      this.logger.error(`Failed to create user: ${error.message}`, error.stack);
+      if (error.code === '23505') {
+        throw new ConflictException('User with this email already exists');
+      }
+      throw error;
+    }
   }
 
   async findAll(): Promise<User[]> {
-    return await this.userRepository.find();
+    try {
+      return await this.userRepository.find();
+    } catch (error) {
+      this.logger.error(
+        `Failed to find all users: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
   }
 
   async findOne(id: number): Promise<User> {
-    const options: FindOneOptions<User> = {
-      where: { id }, // or where: { id: id }
-    };
-    return await this.userRepository.findOne(options);
+    try {
+      const user = await this.userRepository.findOneBy({ id });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
+      return user;
+    } catch (error) {
+      this.logger.error(
+        `Failed to find user ${id}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
   }
 
-  async update(id: number, updateUserDto: UpdateUserDto): Promise<User> {
-    await this.userRepository.update(id, updateUserDto);
-    return this.findOne(id);
+  async update(id: number, updateAuthInput: UpdateUserDto): Promise<User> {
+    try {
+      await this.findOne(id); // ensure the user exists
+
+      if (updateAuthInput.password) {
+        updateAuthInput.password = await bcrypt.hash(
+          updateAuthInput.password,
+          10,
+        );
+      }
+
+      await this.userRepository.update(id, updateAuthInput);
+      return this.findOne(id);
+    } catch (error) {
+      this.logger.error(
+        `Failed to update user ${id}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
   }
 
-  async remove(id: number): Promise<void> {
-    await this.userRepository.delete(id);
+  async remove(id: number): Promise<boolean> {
+    try {
+      await this.findOne(id); // ensure the user exists
+      await this.userRepository.delete(id);
+      return true;
+    } catch (error) {
+      this.logger.error(
+        `Failed to remove user ${id}: ${error.message}`,
+        error.stack,
+      );
+      throw error;
+    }
   }
 }

@@ -6,7 +6,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { QCTask } from './qc-task.entity';
 
 @ObjectType()
 @Entity('projects')
@@ -35,14 +37,13 @@ export class Project {
   @Column({ type: 'varchar', length: 255 })
   country: string;
 
-  @Field()
+  @Field(() => ProjectStatus)
   @Column({
-    type: 'varchar',
-    length: 50,
+    type: 'enum',
     enum: ProjectStatus,
     default: ProjectStatus.PENDING,
   })
-  status: string;
+  status: ProjectStatus;
 
   @Field()
   @CreateDateColumn()
@@ -51,4 +52,5 @@ export class Project {
   @Field(() => Date)
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+
 }

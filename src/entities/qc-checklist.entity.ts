@@ -17,7 +17,7 @@ export class QCChecklist {
   id: number;
 
   @Field(() => QCTask)
-  @ManyToOne(() => QCTask, (qcTask) => qcTask.id)
+  @ManyToOne(() => QCTask, (qcTask) => qcTask.id, {onDelete: 'CASCADE' })
   task: QCTask;
 
   @Field()
