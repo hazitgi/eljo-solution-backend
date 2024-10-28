@@ -1,11 +1,24 @@
-import { Resolver, Query, Mutation, Args, Int } from '@nestjs/graphql';
-import { WorkOrdersService } from './work-orders.service'
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Args,
+  Int,
+  ResolveField,
+  Parent,
+} from '@nestjs/graphql';
+import { WorkOrdersService } from './work-orders.service';
 import { WorkOrder } from '../entities/work-order.entity';
 import { CreateWorkOrderDto } from './dto/create-work-order.dto';
+import { Project } from 'src/entities/project.entity';
+import { ProjectService } from './projects.service';
 
 @Resolver(() => WorkOrder)
 export class WorkOrderResolver {
-  constructor(private readonly workOrdersService: WorkOrdersService) {}
+  constructor(
+    private readonly workOrdersService: WorkOrdersService,
+    private projectService: ProjectService,
+  ) {}
 
   @Query(() => [WorkOrder], { name: 'workOrders' })
   findAll() {
@@ -13,7 +26,9 @@ export class WorkOrderResolver {
   }
 
   @Mutation(() => WorkOrder)
-  createWorkOrder(@Args('createWorkOrderDto') createWorkOrderDto: CreateWorkOrderDto) {
+  async createWorkOrder(
+    @Args('createWorkOrderDto') createWorkOrderDto: CreateWorkOrderDto,
+  ) {
     return this.workOrdersService.create(createWorkOrderDto);
   }
 
@@ -33,5 +48,10 @@ export class WorkOrderResolver {
   @Mutation(() => WorkOrder)
   removeWorkOrder(@Args('id', { type: () => Int }) id: number) {
     return this.workOrdersService.remove(id);
+  }
+
+  @ResolveField(() => Project, { nullable: true })
+  async project(@Parent() workOrder: WorkOrder) {
+    return this.projectService.findOne(workOrder.projectId);
   }
 }

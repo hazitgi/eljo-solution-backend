@@ -8,7 +8,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { QCTask } from './qc-task.entity';
+import { WorkOrder } from './work-order.entity';
 
 @ObjectType()
 @Entity('projects')
@@ -52,5 +52,4 @@ export class Project {
   @Field(() => Date)
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
-
 }

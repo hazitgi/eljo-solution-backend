@@ -8,6 +8,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { Project } from './project.entity';
+import { WorkOrderMode } from 'src/projects/dto/create-work-order.dto';
 
 @ObjectType()
 @Entity('work_orders')
@@ -20,9 +21,9 @@ export class WorkOrder {
   @Column({ type: 'varchar', length: 255 })
   work_order_number: string;
 
-  @Field(() => Project)
-  @ManyToOne(() => Project, (project) => project.id, {onDelete: 'CASCADE' })
-  project: Project;
+  @Field(() => Int)
+  @Column({ type: 'int' })
+  projectId: number;
 
   @Field()
   @Column({ type: 'varchar', length: 255 })
@@ -33,8 +34,12 @@ export class WorkOrder {
   quantity: number;
 
   @Field()
-  @Column({ type: 'varchar', length: 50 })
-  status: string;
+  @Column({
+    type: 'enum',
+    enum: WorkOrderMode,
+    default: WorkOrderMode.FULL,
+  })
+  mode: string;
 
   @Field()
   @CreateDateColumn()

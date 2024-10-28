@@ -1,8 +1,16 @@
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { InputType, Field, Int, registerEnumType } from '@nestjs/graphql';
+
+export enum WorkOrderMode {
+  FULL = 'full',
+  PARTIAL = 'partial',
+}
+
+registerEnumType(WorkOrderMode, {
+  name: 'WorkOrderMode',
+});
 
 @InputType()
 export class CreateWorkOrderDto {
-  @Field()
   work_order_number: string;
 
   @Field(() => Int)
@@ -14,6 +22,6 @@ export class CreateWorkOrderDto {
   @Field(() => Int)
   quantity: number;
 
-  @Field()
-  status: string;
+  @Field(() => WorkOrderMode)
+  mode: WorkOrderMode;
 }

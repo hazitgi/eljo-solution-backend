@@ -13,11 +13,16 @@ import { CreateProjectInput } from './dto/create-project.dto';
 import { UpdateProjectInput } from './dto/update-project.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { WorkOrder } from 'src/entities/work-order.entity';
+import { WorkOrdersService } from './work-orders.service';
 
 @Resolver(() => Project)
 @UseGuards(GqlAuthGuard)
 export class ProjectResolver {
-  constructor(private projectService: ProjectService) {}
+  constructor(
+    private projectService: ProjectService,
+    private workOrdersService: WorkOrdersService,
+  ) {}
 
   @Query(() => [Project])
   async projects() {
@@ -31,8 +36,8 @@ export class ProjectResolver {
 
   @Mutation(() => Project)
   async createProject(@Args('input') input: CreateProjectInput) {
-    console.log("🚀 ~ ProjectResolver ~ createProject ~ input:", input)
-    
+    console.log('🚀 ~ ProjectResolver ~ createProject ~ input:', input);
+
     return this.projectService.create(input);
   }
 
