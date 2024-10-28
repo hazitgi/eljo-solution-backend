@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  UpdateDateColumn,
 } from 'typeorm';
 import { WorkOrder } from './work-order.entity';
 import { User } from './user.entity';
@@ -35,4 +36,8 @@ export class QCTask {
   @Field()
   @CreateDateColumn()
   created_at: Date;
+
+  @Field(() => Date)
+  @UpdateDateColumn({ type: 'timestamp' })
+  updated_at: Date;
 }

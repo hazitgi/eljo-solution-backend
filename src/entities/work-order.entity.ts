@@ -5,6 +5,7 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  UpdateDateColumn,
 } from 'typeorm';
 import { Project } from './project.entity';
 
@@ -38,4 +39,8 @@ export class WorkOrder {
   @Field()
   @CreateDateColumn()
   created_at: Date;
+
+  @Field(() => Date)
+  @UpdateDateColumn({ type: 'timestamp' })
+  updated_at: Date;
 }

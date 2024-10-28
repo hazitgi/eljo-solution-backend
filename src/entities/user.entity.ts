@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  UpdateDateColumn
 } from 'typeorm';
 
 @ObjectType()
@@ -44,4 +45,8 @@ export class User {
   @Field(() => Date)
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
+
+  @Field(() => Date)
+  @UpdateDateColumn({ type: 'timestamp' })
+  updated_at: Date;
 }

@@ -9,12 +9,16 @@ import { DatabaseModule } from './database/database.module';
 import { UsersModule } from './users/users.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { ProjectsModule } from './projects/projects.module';
+import { QcModule } from './qc/qc.module';
+import { FilesModule } from './files/files.module';
+
 
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
-      serveRoot: '/', 
+      serveRoot: '/static', 
     }),
     DatabaseModule,
     ConfigModule.forRoot({
@@ -29,6 +33,9 @@ import { join } from 'path';
     }),
     AuthModule,
     UsersModule,
+    ProjectsModule,
+    QcModule,
+    FilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
