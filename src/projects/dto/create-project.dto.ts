@@ -10,12 +10,6 @@ export enum ProjectStatus {
   ACTIVE = 'active',
   PENDING = 'pending',
 }
-export enum QCStatus {
-  PENDING = 'pending',
-  ASSIGNED = 'assigned',
-  STARTED = 'started',
-  FINISHED = 'finished',
-}
 
 registerEnumType(ProjectStatus, {
   name: 'ProjectStatus', // This name is used in the GraphQL schema

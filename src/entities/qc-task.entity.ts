@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -9,6 +9,17 @@ import {
 } from 'typeorm';
 import { WorkOrder } from './work-order.entity';
 import { User } from './user.entity';
+
+export enum QCStatus {
+  PENDING = 'pending',
+  ASSIGNED = 'assigned',
+  STARTED = 'started',
+  FINISHED = 'finished',
+}
+
+registerEnumType(QCStatus, {
+  name: 'QCStatus', // This name is used in the GraphQL schema
+});
 
 @ObjectType()
 @Entity('qc_tasks')
@@ -32,8 +43,8 @@ export class QCTask {
   assignee: User;
 
   @Field()
-  @Column({ type: 'varchar', length: 50 })
-  status: string;
+  @Column({ type: 'enum', enum: QCStatus, default: QCStatus.PENDING })
+  status: QCStatus;
 
   @Field()
   @CreateDateColumn()

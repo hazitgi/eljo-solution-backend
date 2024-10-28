@@ -1,16 +1,17 @@
 import { InputType, Field } from '@nestjs/graphql';
+import { QCStatus } from 'src/entities/qc-task.entity';
 
 @InputType()
 export class CreateQCTaskInput {
-  @Field()
-  work_order_id: number;
+  @Field(() => Number)
+  workOrderId: number; // ID of the associated work order
 
   @Field()
-  qc_type: string;
+  qc_type: string; // Type of QC task
 
-  @Field()
-  assignee_id: number;
+  @Field(() => Number)
+  assigneeId: number; // ID of the user assigned to the task
 
-  @Field({ nullable: true })
-  scheduled_date?: Date;
+  @Field(() => Date, { nullable: true })
+  scheduled_date?: Date; // Optional scheduled date for the task
 }

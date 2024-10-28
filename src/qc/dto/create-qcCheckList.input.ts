@@ -1,5 +1,5 @@
 // DTO for CreateQCChecklistInput
-import { InputType, Field, Int } from '@nestjs/graphql';
+import { InputType, Field, Int, PartialType } from '@nestjs/graphql';
 
 @InputType()
 export class CreateQCChecklistInput {
@@ -12,7 +12,7 @@ export class CreateQCChecklistInput {
   @Field()
   parameter: string;
 
-  @Field()
+  @Field({ nullable: true })
   status: string;
 
   @Field({ nullable: true })

@@ -6,16 +6,21 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
-import { QCTask } from '../entities/qc-task.entity';
+import { QCStatus, QCTask } from '../entities/qc-task.entity';
 import { QCTaskService } from './qc.service';
 import { CreateQCTaskInput } from './dto/create-qc.input';
 import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
+import { User } from 'src/entities/user.entity';
+import { UsersService } from 'src/users/users.service';
 
 @Resolver(() => QCTask)
-@UseGuards(GqlAuthGuard)
+// @UseGuards(GqlAuthGuard)
 export class QCTaskResolver {
-  constructor(private qcTaskService: QCTaskService) {}
+  constructor(
+    private qcTaskService: QCTaskService,
+    // private readonly usersService: UsersService,
+  ) {}
 
   @Query(() => [QCTask])
   async qcTasks() {
@@ -30,8 +35,17 @@ export class QCTaskResolver {
   @Mutation(() => QCTask)
   async updateQCTaskStatus(
     @Args('id') id: number,
-    @Args('status') status: string,
+    @Args('status') status: QCStatus,
   ) {
     return this.qcTaskService.updateStatus(id, status);
   }
+
+  @Mutation(() => QCTask)
+  async assignQCTask(
+    @Args('taksId') taksId: number,
+    @Args('userId') userId: number,
+  ) {
+    return this.qcTaskService.assingTaskToUser(taksId, userId);
+  }
+
 }

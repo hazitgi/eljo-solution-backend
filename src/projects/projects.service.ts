@@ -54,15 +54,21 @@ export class ProjectService {
   }
 
   async update(id: number, input: UpdateProjectInput): Promise<Project> {
-    const project = await this.findOne(id);
+    const project = await this.projectRepository.findOne({ where: { id } });
 
-    // Update only the fields that are provided
-    Object.assign(project, {
-      ...(input.project_name && { project_name: input.project_name }),
-      ...(input.status && { status: input.status }),
+    input.project_number = this.buildProjectNumber({
+      location: input?.location || project.location,
+      country: input?.country || project.country,
+      client_name: input?.client_name || project.client_name,
+      project_name: input?.project_name || project.project_name,
     });
-
-    return this.projectRepository.save(project);
+    Object.keys(input).forEach((key) => {
+      if (input[key] !== undefined && input[key] !== 'id') {
+        project[key] = input[key];
+      }
+    });
+    await this.projectRepository.update(id, project);
+    return this.findOne(id);
   }
 
   async getProjectMetrics(id: number): Promise<Project> {
@@ -108,6 +114,7 @@ export class ProjectService {
 
   remove(id: number) {
     return this.projectRepository.delete(id);
+
   }
 
   buildProjectNumber({

@@ -15,6 +15,7 @@ import { UseGuards } from '@nestjs/common';
 import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { WorkOrder } from 'src/entities/work-order.entity';
 import { WorkOrdersService } from './work-orders.service';
+import { DeleteProjectResponse } from './dto/project-delete-response';
 
 @Resolver(() => Project)
 @UseGuards(GqlAuthGuard)
@@ -51,8 +52,10 @@ export class ProjectResolver {
     return this.projectService.getProjectMetrics(id);
   }
 
-  @Mutation(() => Project)
-  async removeProject(@Args('id', { type: () => Int }) id: number) {
-    return this.projectService.remove(id);
+  @Mutation(() => DeleteProjectResponse)
+  async removeProject(@Args('id', { type: () => Int }) id: number): Promise<DeleteProjectResponse> {
+    await this.projectService.remove(id);
+    return { id, message: "Project removed successfully" };
   }
+  
 }

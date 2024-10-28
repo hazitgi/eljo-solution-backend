@@ -22,15 +22,15 @@ export class QCChecklist {
 
   @Field()
   @Column({ type: 'varchar', length: 255 })
-  category: string;
+  category: string; // e.g., "Letter Moulding", "Metal Fabrication", "CNC Laser Cutting", "Sanding"
 
   @Field()
   @Column({ type: 'varchar', length: 255 })
-  parameter: string;
+  parameter: string; // e.g., "Depth of Material", "Surface Finish", etc.
 
-  @Field()
-  @Column({ type: 'varchar', length: 50 })
-  status: string;
+  @Field({nullable: true })
+  @Column({ type: 'enum', enum:["Yes", "No"] })
+  status: string;  // "Yes" or "No"
 
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
