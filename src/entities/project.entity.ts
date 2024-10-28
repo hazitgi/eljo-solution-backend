@@ -52,4 +52,9 @@ export class Project {
   @Field(() => Date)
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+
+  // Define the OneToMany relationship with WorkOrder
+  @Field(() => [WorkOrder])
+  @OneToMany(() => WorkOrder, (workOrder) => workOrder.project)
+  workOrders: WorkOrder[];
 }

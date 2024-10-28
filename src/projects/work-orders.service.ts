@@ -59,8 +59,16 @@ export class WorkOrdersService {
     return this.findOne(id);
   }
 
-  remove(id: number) {
-    return this.workOrdersRepository.delete(id);
+  async remove(id: number): Promise<void> {
+    const workOrder = await this.workOrdersRepository.findOne({
+      where: { id },
+    });
+
+    if (!workOrder) {
+      throw new Error(`Work order with id ${id} does not exist.`);
+    }
+
+    await this.workOrdersRepository.delete(id);
   }
 
   buildWorkOrdertNumber(

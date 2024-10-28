@@ -48,4 +48,9 @@ export class WorkOrder {
   @Field(() => Date)
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+
+    // Define the ManyToOne relationship with Project
+    @Field(() => Project)
+    @ManyToOne(() => Project, (project) => project.workOrders, { onDelete: 'CASCADE' })
+    project: Project;
 }
