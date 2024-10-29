@@ -103,7 +103,7 @@ export class WorkOrdersService {
             this.qcChecklistRepository.create({
               category: item.category,
               parameter: item.parameter,
-              status: item.status,
+              status: item.status ? item.status : null,
               comments: item.comments,
               workOrder, // Associate checklist items with the saved work order
             }),

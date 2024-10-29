@@ -19,6 +19,7 @@ import { GqlAuthGuard } from 'src/auth/guards/gql-auth.guard';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/users/dto/create-user.dto';
+import { AssignWorkOrderInput } from './dto/work-order.input';
 
 @Resolver(() => WorkOrder)
 @UseGuards(GqlAuthGuard, RolesGuard)
@@ -72,6 +73,13 @@ export class WorkOrderResolver {
     } catch (error) {
       throw new NotFoundException(error.message);
     }
+  }
+
+  @Mutation(() => WorkOrder)
+  async assignWorkOrder(
+    @Args('assignWorkOrderInput') assignWorkOrderInput: AssignWorkOrderInput,
+  ): Promise<WorkOrder> {
+    return this.workOrdersService.assignWorkOrder(assignWorkOrderInput);
   }
 
   @ResolveField(() => Project, { nullable: true })

@@ -33,7 +33,7 @@ export class QCChecklist {
   parameter: string;
 
   @Field({ nullable: true })
-  @Column({ type: 'enum', enum: ['Yes', 'No'] })
+  @Column({ type: 'enum', enum: ['Yes', 'No'], nullable: true })
   status: string;
 
   @Field({ nullable: true })
