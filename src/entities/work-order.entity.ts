@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql';
+import { ObjectType, Field, Int, registerEnumType } from '@nestjs/graphql';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -6,9 +6,24 @@ import {
   CreateDateColumn,
   ManyToOne,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Project } from './project.entity';
 import { WorkOrderMode } from 'src/projects/dto/create-work-order.dto';
+import { QCChecklist } from './qc-checklist.entity';
+
+import { User } from './user.entity';
+
+export enum QCStatus {
+  PENDING = 'pending',
+  ASSIGNED = 'assigned',
+  STARTED = 'started',
+  FINISHED = 'finished',
+}
+
+registerEnumType(QCStatus, {
+  name: 'QCStatus', // This name is used in the GraphQL schema
+});
 
 @ObjectType()
 @Entity('work_orders')
@@ -36,10 +51,18 @@ export class WorkOrder {
   @Field()
   @Column({
     type: 'enum',
-    enum: WorkOrderMode,
-    default: WorkOrderMode.FULL,
+    enum: ['full', 'partial'],
+    default: 'full',
   })
   mode: string;
+
+  @Field()
+  @Column({ type: 'enum', enum: QCStatus, default: QCStatus.PENDING })
+  status: QCStatus;
+
+  @Field(() => User, { nullable: true })
+  @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
+  assignee: User;
 
   @Field()
   @CreateDateColumn()
@@ -49,10 +72,13 @@ export class WorkOrder {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  // Define the ManyToOne relationship with Project
   @Field(() => Project, { nullable: true })
   @ManyToOne(() => Project, (project) => project.workOrders, {
     onDelete: 'CASCADE',
   })
   project: Project;
+
+  @Field(() => [QCChecklist])
+  @OneToMany(() => QCChecklist, (qcChecklist) => qcChecklist.workOrder)
+  qcChecklist: QCChecklist[];
 }

@@ -21,7 +21,7 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/users/dto/create-user.dto';
 
 @Resolver(() => WorkOrder)
-@UseGuards(GqlAuthGuard, RolesGuard) 
+@UseGuards(GqlAuthGuard, RolesGuard)
 export class WorkOrderResolver {
   constructor(
     private readonly workOrdersService: WorkOrdersService,
@@ -59,9 +59,9 @@ export class WorkOrderResolver {
   @Roles(Role.ADMIN)
   async removeWorkOrder(
     @Args('id', { type: () => Int }) id: number,
-    @Context() context: any 
+    @Context() context: any,
   ): Promise<DeleteWorkOrdertResponse> {
-    console.log("🚀 ~ WorkOrderResolver ~ context:", context.req.user)
+    console.log('🚀 ~ WorkOrderResolver ~ context:', context.req.user);
     try {
       await this.workOrdersService.remove(id);
       // Construct the response object

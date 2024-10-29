@@ -22,9 +22,7 @@ export class FilesController {
   constructor(private readonly filesService: FilesService) {}
 
   private sanitizeFilename(filename: string): string {
-    return filename
-      .replace(/[^a-zA-Z0-9.-]/g, '_')
-      .replace(/_{2,}/g, '_');
+    return filename.replace(/[^a-zA-Z0-9.-]/g, '_').replace(/_{2,}/g, '_');
   }
 
   @Post('upload/:checklistId')
@@ -38,14 +36,17 @@ export class FilesController {
     }
 
     const sanitizedFilename = this.sanitizeFilename(file.originalname);
-    
+
     try {
-      const savedFile = await this.filesService.saveFile({
-        buffer: file.buffer,
-        originalname: sanitizedFilename,
-        mimetype: file.mimetype,
-        size: file.size,
-      }, checklistId);
+      const savedFile = await this.filesService.saveFile(
+        {
+          buffer: file.buffer,
+          originalname: sanitizedFilename,
+          mimetype: file.mimetype,
+          size: file.size,
+        },
+        checklistId,
+      );
 
       return {
         id: savedFile.id,
@@ -70,11 +71,14 @@ export class FilesController {
   ): Promise<void> {
     try {
       const file = await this.filesService.getFileById(id);
-      
-      res.setHeader('Content-Disposition', `attachment; filename="${file.originalname}"`);
+
+      res.setHeader(
+        'Content-Disposition',
+        `attachment; filename="${file.originalname}"`,
+      );
       res.setHeader('Content-Type', file.mimetype);
       res.setHeader('X-Content-Type-Options', 'nosniff');
-      
+
       await this.filesService.streamFileToResponse(file, res);
     } catch (error) {
       if (error instanceof NotFoundException) {
@@ -85,7 +89,9 @@ export class FilesController {
   }
 
   @Delete(':id')
-  async deleteFile(@Param('id', ParseIntPipe) id: number): Promise<{ message: string }> {
+  async deleteFile(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<{ message: string }> {
     try {
       await this.filesService.removeFile(id);
       return { message: 'File deleted successfully' };

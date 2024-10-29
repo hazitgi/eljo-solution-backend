@@ -7,10 +7,7 @@ import { QCChecklist } from '../entities/qc-checklist.entity';
 import { ConfigModule } from '@nestjs/config';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([File, QCChecklist]),
-    ConfigModule,
-  ],
+  imports: [TypeOrmModule.forFeature([File, QCChecklist]), ConfigModule],
   controllers: [FilesController],
   providers: [FilesService],
   exports: [FilesService],

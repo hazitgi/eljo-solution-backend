@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   ManyToOne,
 } from 'typeorm';
-import { QCTask } from './qc-task.entity';
+
 import { QCChecklist } from './qc-checklist.entity';
 
 @ObjectType()
@@ -37,7 +37,9 @@ export class File {
   path: string;
 
   @Field(() => QCChecklist)
-  @ManyToOne(() => QCChecklist, (checklist) => checklist.files)
+  @ManyToOne(() => QCChecklist, (checklist) => checklist.files, {
+    onDelete: 'CASCADE',
+  })
   checklist: QCChecklist;
 
   @Field({ nullable: true })

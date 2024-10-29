@@ -21,7 +21,8 @@ export class FilesService {
     private readonly checklistRepository: Repository<QCChecklist>,
     private readonly configService: ConfigService,
   ) {
-    this.uploadDir = this.configService.get<string>('UPLOAD_DIR') || './uploads';
+    this.uploadDir =
+      this.configService.get<string>('UPLOAD_DIR') || './uploads';
     this.ensureUploadDir();
   }
 
@@ -40,11 +41,11 @@ export class FilesService {
   }
 
   async saveFile(
-    fileData: { 
-      buffer: Buffer; 
-      originalname: string; 
-      mimetype: string; 
-      size: number 
+    fileData: {
+      buffer: Buffer;
+      originalname: string;
+      mimetype: string;
+      size: number;
     },
     checklistId: number,
   ): Promise<File> {
@@ -87,9 +88,7 @@ export class FilesService {
       await fs.access(file.path);
       const fileStream = createReadStream(file.path);
       return new Promise((resolve, reject) => {
-        fileStream.pipe(response)
-          .on('finish', resolve)
-          .on('error', reject);
+        fileStream.pipe(response).on('finish', resolve).on('error', reject);
       });
     } catch (error) {
       throw new NotFoundException('File not found on disk');

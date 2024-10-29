@@ -114,7 +114,6 @@ export class ProjectService {
 
   remove(id: number) {
     return this.projectRepository.delete(id);
-
   }
 
   buildProjectNumber({

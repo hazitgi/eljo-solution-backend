@@ -8,8 +8,8 @@ import {
   OneToMany,
   UpdateDateColumn,
 } from 'typeorm';
-import { QCTask } from './qc-task.entity';
 import { File } from './file.entity';
+import { WorkOrder } from './work-order.entity';
 
 @ObjectType()
 @Entity('qc_checklists')
@@ -18,9 +18,11 @@ export class QCChecklist {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => QCTask)
-  @ManyToOne(() => QCTask, (qcTask) => qcTask.id, { onDelete: 'CASCADE' })
-  task: QCTask;
+  @Field(() => WorkOrder)
+  @ManyToOne(() => WorkOrder, (workOrder) => workOrder.qcChecklist, {
+    onDelete: 'CASCADE',
+  })
+  workOrder: WorkOrder;
 
   @Field()
   @Column({ type: 'varchar', length: 255 })
@@ -31,7 +33,7 @@ export class QCChecklist {
   parameter: string;
 
   @Field({ nullable: true })
-  @Column({ type: 'enum', enum: ["Yes", "No"] })
+  @Column({ type: 'enum', enum: ['Yes', 'No'] })
   status: string;
 
   @Field({ nullable: true })
@@ -46,8 +48,7 @@ export class QCChecklist {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
 
-  // Define a one-to-many relationship with File
   @Field(() => [File], { nullable: true })
-  @OneToMany(() => File, (file) => file.checklist)
+  @OneToMany(() => File, (file) => file.checklist, { onDelete: 'CASCADE' })
   files: File[];
 }

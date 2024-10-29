@@ -7,9 +7,14 @@ import { WorkOrder } from 'src/entities/work-order.entity';
 import { FilesModule } from 'src/files/files.module';
 import { WorkOrderResolver } from './work-order.resolver';
 import { WorkOrdersService } from './work-orders.service';
+import { QCChecklist } from 'src/entities/qc-checklist.entity';
+import { User } from 'src/entities/user.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Project, WorkOrder]), FilesModule],
+  imports: [
+    TypeOrmModule.forFeature([Project, WorkOrder, QCChecklist, User]),
+    FilesModule,
+  ],
   providers: [
     ProjectService,
     WorkOrdersService,

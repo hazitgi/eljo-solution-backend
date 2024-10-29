@@ -10,7 +10,6 @@ import { UsersModule } from './users/users.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { ProjectsModule } from './projects/projects.module';
-import { QcModule } from './qc/qc.module';
 import { FilesModule } from './files/files.module';
 
 @Module({
@@ -33,7 +32,7 @@ import { FilesModule } from './files/files.module';
     AuthModule,
     UsersModule,
     ProjectsModule,
-    QcModule,
+    // QcModule,
     FilesModule,
   ],
   controllers: [AppController],
