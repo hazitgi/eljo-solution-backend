@@ -63,4 +63,9 @@ export class ProjectResolver {
     await this.projectService.remove(id);
     return { id, message: 'Project removed successfully' };
   }
+
+  @ResolveField(() => WorkOrder, { nullable: true })
+  async workOrders(@Parent() workOrder: WorkOrder) {
+    return this.workOrdersService.findAllByProject(workOrder.id);
+  }
 }
