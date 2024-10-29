@@ -6,9 +6,11 @@ import {
   CreateDateColumn,
   ManyToOne,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { WorkOrder } from './work-order.entity';
 import { User } from './user.entity';
+import { QCChecklist } from './qc-checklist.entity';
 
 export enum QCStatus {
   PENDING = 'pending',
@@ -38,7 +40,7 @@ export class QCTask {
   @Column({ type: 'varchar', length: 255 })
   qc_type: string;
 
-  @Field(() => User)
+  @Field(() => User, { nullable: true })
   @ManyToOne(() => User, (user) => user.id, { onDelete: 'CASCADE' })
   assignee: User;
 
@@ -53,4 +55,9 @@ export class QCTask {
   @Field(() => Date)
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+
+  // Define the OneToMany relationship with WorkOrder
+  @Field(() => [QCChecklist])
+  @OneToMany(() => QCChecklist, (qcChecklist) => qcChecklist.task)
+  qcChecklist: QCChecklist[];
 }
