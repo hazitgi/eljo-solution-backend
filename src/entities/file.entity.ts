@@ -7,6 +7,7 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { QCTask } from './qc-task.entity';
+import { QCChecklist } from './qc-checklist.entity';
 
 @ObjectType()
 @Entity('files')
@@ -15,27 +16,31 @@ export class File {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Field(() => QCTask)
-  @ManyToOne(() => QCTask, (qcTask) => qcTask.id)
-  task: QCTask;
+  @Field()
+  @Column()
+  filename: string;
 
   @Field()
-  @Column({ type: 'varchar', length: 255 })
-  file_name: string;
+  @Column({ nullable: true })
+  originalname: string;
 
-  @Field()
-  @Column({ type: 'varchar', length: 255 })
-  file_path: string;
+  @Field({ nullable: true })
+  @Column()
+  mimetype: string;
 
-  @Field()
-  @Column({ type: 'varchar', length: 50 })
-  file_type: string;
-
-  @Field(() => Int)
-  @Column({ type: 'int' })
+  @Field({ nullable: true })
+  @Column()
   size: number;
 
-  @Field()
+  @Field({ nullable: true })
+  @Column()
+  path: string;
+
+  @Field(() => QCChecklist)
+  @ManyToOne(() => QCChecklist, (checklist) => checklist.files)
+  checklist: QCChecklist;
+
+  @Field({ nullable: true })
   @CreateDateColumn()
   created_at: Date;
 }

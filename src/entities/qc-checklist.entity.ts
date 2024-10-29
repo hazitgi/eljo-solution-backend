@@ -5,9 +5,11 @@ import {
   Column,
   CreateDateColumn,
   ManyToOne,
+  OneToMany,
   UpdateDateColumn,
 } from 'typeorm';
 import { QCTask } from './qc-task.entity';
+import { File } from './file.entity';
 
 @ObjectType()
 @Entity('qc_checklists')
@@ -22,15 +24,15 @@ export class QCChecklist {
 
   @Field()
   @Column({ type: 'varchar', length: 255 })
-  category: string; // e.g., "Letter Moulding", "Metal Fabrication", "CNC Laser Cutting", "Sanding"
+  category: string;
 
   @Field()
   @Column({ type: 'varchar', length: 255 })
-  parameter: string; // e.g., "Depth of Material", "Surface Finish", etc.
+  parameter: string;
 
-  @Field({nullable: true })
-  @Column({ type: 'enum', enum:["Yes", "No"] })
-  status: string;  // "Yes" or "No"
+  @Field({ nullable: true })
+  @Column({ type: 'enum', enum: ["Yes", "No"] })
+  status: string;
 
   @Field({ nullable: true })
   @Column({ type: 'text', nullable: true })
@@ -43,4 +45,9 @@ export class QCChecklist {
   @Field(() => Date)
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at: Date;
+
+  // Define a one-to-many relationship with File
+  @Field(() => [File], { nullable: true })
+  @OneToMany(() => File, (file) => file.checklist)
+  files: File[];
 }

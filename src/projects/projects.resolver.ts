@@ -16,9 +16,12 @@ import { GqlAuthGuard } from '../auth/guards/gql-auth.guard';
 import { WorkOrder } from 'src/entities/work-order.entity';
 import { WorkOrdersService } from './work-orders.service';
 import { DeleteProjectResponse } from './dto/project-delete-response';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { Role } from 'src/users/dto/create-user.dto';
 
 @Resolver(() => Project)
-@UseGuards(GqlAuthGuard)
+@UseGuards(GqlAuthGuard, RolesGuard)
 export class ProjectResolver {
   constructor(
     private projectService: ProjectService,
@@ -36,13 +39,13 @@ export class ProjectResolver {
   }
 
   @Mutation(() => Project)
+  @Roles(Role.ADMIN)
   async createProject(@Args('input') input: CreateProjectInput) {
-    console.log('🚀 ~ ProjectResolver ~ createProject ~ input:', input);
-
     return this.projectService.create(input);
   }
 
   @Mutation(() => Project)
+  @Roles(Role.ADMIN)
   async updateProject(@Args('input') input: UpdateProjectInput) {
     return this.projectService.update(input.id, input);
   }
@@ -53,9 +56,11 @@ export class ProjectResolver {
   }
 
   @Mutation(() => DeleteProjectResponse)
-  async removeProject(@Args('id', { type: () => Int }) id: number): Promise<DeleteProjectResponse> {
+  @Roles(Role.ADMIN)
+  async removeProject(
+    @Args('id', { type: () => Int }) id: number,
+  ): Promise<DeleteProjectResponse> {
     await this.projectService.remove(id);
-    return { id, message: "Project removed successfully" };
+    return { id, message: 'Project removed successfully' };
   }
-  
 }
