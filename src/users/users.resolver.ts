@@ -17,8 +17,11 @@ export class UsersResolver {
   }
 
   @Query(() => [User])
-  async getUsers(): Promise<User[]> {
-    return this.usersService.findAll();
+  async getUsers(
+    @Args('role', { type: () => String, nullable: true }) role?: 'admin' | 'qc_inspector',
+    @Args('name', { type: () => String, nullable: true }) name?: string,
+  ): Promise<User[]> {
+    return this.usersService.findAll(role, name);
   }
 
   @Query(() => User)
