@@ -47,6 +47,11 @@ export class WorkOrderResolver {
     return this.workOrdersService.findOne(id);
   }
 
+  @Query(() => [WorkOrder], { name: 'workOrdersByEmployeeId' })
+  workOrdersByEmployeeId(@Args('userId', { type: () => Int }) userId: number) {
+    return this.workOrdersService.findAllByEmployeeId(userId);
+  }
+
   @Mutation(() => WorkOrder)
   @Roles(Role.ADMIN)
   updateWorkOrder(

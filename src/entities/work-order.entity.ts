@@ -78,7 +78,7 @@ export class WorkOrder {
   })
   project: Project;
 
-  @Field(() => [QCChecklist])
+  @Field(() => [QCChecklist], { nullable: true })
   @OneToMany(() => QCChecklist, (qcChecklist) => qcChecklist.workOrder)
   qcChecklist: QCChecklist[];
 }

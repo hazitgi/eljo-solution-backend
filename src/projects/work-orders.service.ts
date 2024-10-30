@@ -39,6 +39,14 @@ export class WorkOrdersService {
     });
   }
 
+  async findAllByEmployeeId(userId: number) {
+    let order = await this.workOrdersRepository.find({
+      where: { assignee: { id: userId } },
+      relations: ['project', 'qcChecklist', 'qcChecklist.files', 'assignee'],
+    });
+    return order ?? []
+  }
+
   async findOne(id: number) {
     const workOrder = await this.workOrdersRepository.findOne({
       where: { id },
