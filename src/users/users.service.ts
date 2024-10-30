@@ -45,9 +45,24 @@ export class UsersService {
     }
   }
 
-  async findAll(): Promise<User[]> {
+  async findAll(
+    role?: 'admin' | 'qc_inspector',
+    name?: string,
+  ): Promise<User[]> {
     try {
-      return await this.userRepository.find();
+      const queryBuilder = this.userRepository.createQueryBuilder('user');
+
+      // Apply role filter if provided
+      if (role) {
+        queryBuilder.andWhere('user.role = :role', { role });
+      }
+
+      // Apply name search if provided
+      if (name) {
+        queryBuilder.andWhere('user.name LIKE :name', { name: `%${name}%` });
+      }
+
+      return await queryBuilder.getMany();
     } catch (error) {
       this.logger.error(
         `Failed to find all users: ${error.message}`,
