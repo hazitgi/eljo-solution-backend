@@ -25,7 +25,7 @@ export class CreateWorkOrderDto {
   @Field(() => WorkOrderMode)
   mode: WorkOrderMode;
 
-  @Field(() => [CreateQCTaskWithChecklistInput])
+  @Field(() => [CreateQCTaskWithChecklistInput], { nullable: true })
   qcChecklist: CreateQCTaskWithChecklistInput[];
 
   @Field(() => Number, { nullable: true })

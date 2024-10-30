@@ -103,38 +103,128 @@ export class WorkOrdersService {
     // Save the work order to obtain its ID for relations
     await this.workOrdersRepository.save(workOrder);
 
-    // Create QC checklist items and associate with work order
-    const qcChecklists = createWorkOrderDto.qcChecklist.map(
-      (qcTask: CreateQCTaskWithChecklistInput) => {
-        const checklistItems = qcTask.checklistItems.map(
-          (item: ChecklistItemInput) =>
-            this.qcChecklistRepository.create({
-              category: item.category,
-              parameter: item.parameter,
-              status: item.status ? item.status : null,
-              comments: item.comments,
-              workOrder, // Associate checklist items with the saved work order
-            }),
-        );
-
-        return {
-          qc_type: qcTask.qc_type,
-
-          checklistItems,
-        };
+    const qcChecklists = [
+      {
+        "qc_type": "Letter Moulding",
+        "checklistItems": [
+          { "category": "Letter Moulding", "parameter": "Depth of Material" },
+          { "category": "Letter Moulding", "parameter": "Surface Finish" },
+          { "category": "Letter Moulding", "parameter": "Edges and Side Finish" },
+          { "category": "Letter Moulding", "parameter": "Quantity" },
+          { "category": "Letter Moulding", "parameter": "Workmanship" }
+        ]
       },
-    );
+      {
+        "qc_type": "Metal Fabrication",
+        "checklistItems": [
+          { "category": "Metal Fabrication", "parameter": "Material Type / Size" },
+          { "category": "Metal Fabrication", "parameter": "Fixing Methods & Assembly" },
+          { "category": "Metal Fabrication", "parameter": "Stretcheral Support" },
+          { "category": "Metal Fabrication", "parameter": "Surface Finish" },
+          { "category": "Metal Fabrication", "parameter": "Quantity" }
+        ]
+      },
+      {
+        "qc_type": "CNC Laser Cutting",
+        "checklistItems": [
+          { "category": "CNC Laser Cutting", "parameter": "Verify Cutting Files" },
+          { "category": "CNC Laser Cutting", "parameter": "Material Types" },
+          { "category": "CNC Laser Cutting", "parameter": "Cutting Quality" },
+          { "category": "CNC Laser Cutting", "parameter": "Quantity" }
+        ]
+      },
+      {
+        "qc_type": "Sanding",
+        "checklistItems": [
+          { "category": "Sanding", "parameter": "Surface Finish" },
+          { "category": "Sanding", "parameter": "Powder Costing Coat" },
+          { "category": "Sanding", "parameter": "Workmanship" }
+        ]
+      },
+      {
+        "qc_type": "Painting",
+        "checklistItems": [
+          { "category": "Painting", "parameter": "Colour / Coat" },
+          { "category": "Painting", "parameter": "Surface Finish" },
+          { "category": "Painting", "parameter": "Quantity" },
+          { "category": "Painting", "parameter": "Workmanship" }
+        ]
+      },
+      {
+        "qc_type": "Vinyl / Graphics / ScreenPrinting",
+        "checklistItems": [
+          { "category": "Vinyl / Graphics / ScreenPrinting", "parameter": "Material Specification" },
+          { "category": "Vinyl / Graphics / ScreenPrinting", "parameter": "Surface Finish" },
+          { "category": "Vinyl / Graphics / ScreenPrinting", "parameter": "Print Quality" },
+          { "category": "Vinyl / Graphics / ScreenPrinting", "parameter": "Workmanship" }
+        ]
+      },
+      {
+        "qc_type": "Acrylic",
+        "checklistItems": [
+          { "category": "Acrylic", "parameter": "Material Specification" },
+          { "category": "Acrylic", "parameter": "Surface Finish" },
+          { "category": "Acrylic", "parameter": "Quantity" },
+          { "category": "Acrylic", "parameter": "Fixing" },
+          { "category": "Acrylic", "parameter": "Workmanship" }
+        ]
+      },
+      {
+        "qc_type": "Electricals",
+        "checklistItems": [
+          { "category": "Electricals", "parameter": "LED Brand" },
+          { "category": "Electricals", "parameter": "KELVIN temperature" },
+          { "category": "Electricals", "parameter": "Visual Checkup" },
+          { "category": "Electricals", "parameter": "Verify Electrical Components" },
+          { "category": "Electricals", "parameter": "Quantity" }
+        ]
+      },
+      {
+        "qc_type": "Polishing",
+        "checklistItems": [
+          { "category": "Polishing", "parameter": "Surface Finish" },
+          { "category": "Polishing", "parameter": "Workmanship" }
+        ]
+      },
+      {
+        "qc_type": "Packaging",
+        "checklistItems": [
+          { "category": "Packaging", "parameter": "Cleaning" },
+          { "category": "Packaging", "parameter": "Physical Damages" },
+          { "category": "Packaging", "parameter": "Quantity" },
+          { "category": "Packaging", "parameter": "Workmanship" }
+        ]
+      },
+      {
+        "qc_type": "Outsourced & Fixing Materials",
+        "checklistItems": [
+          { "category": "Outsourced & Fixing Materials", "parameter": "Material Specification" },
+          { "category": "Outsourced & Fixing Materials", "parameter": "Surface Finish" },
+          { "category": "Outsourced & Fixing Materials", "parameter": "Quantity" },
+          { "category": "Outsourced & Fixing Materials", "parameter": "Workmanship" }
+        ]
+      }
+    ]
 
     // Save QC checklists with nested checklist items
-    for (const qcChecklist of qcChecklists) {
-      await this.qcChecklistRepository.save(qcChecklist.checklistItems);
-    }
+  for (const qcTask of qcChecklists) {
+    const checklistItems = qcTask.checklistItems.map(item =>
+      this.qcChecklistRepository.create({
+        category: item.category,
+        parameter: item.parameter,
+        status:   null,
+        comments: null,
+        workOrder,
+      })
+    );
+    await this.qcChecklistRepository.save(checklistItems);
+  }
 
-    // Reload the work order with updated relations and return it
-    return await this.workOrdersRepository.findOne({
-      where: { id: workOrder.id },
-      relations: ['qcChecklist', 'qcChecklist.files', 'assignee'], // Adjust relations as needed
-    });
+  // Reload the work order with updated relations and return it
+  return await this.workOrdersRepository.findOne({
+    where: { id: workOrder.id },
+    relations: ['qcChecklist', 'qcChecklist.files', 'assignee'],
+  });
   }
 
   private buildWorkOrderNumber(
