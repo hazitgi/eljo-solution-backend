@@ -25,8 +25,9 @@ export class AuthResolver {
   async login(
     @Args('email') email: string,
     @Args('password') password: string,
+    @Args("role", { type: () => String, nullable: true }) role?: 'admin' | 'qc_inspector',
   ) {
-    return await this.authService.login(email, password);
+    return await this.authService.login(email, password, role);
   }
 
   @Mutation(() => String)

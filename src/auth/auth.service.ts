@@ -37,8 +37,11 @@ export class AuthService {
     return null;
   }
 
-  async login(email: string, password: string) {
+  async login(email: string, password: string, role?: 'admin' | 'qc_inspector') {
     const user = await this.validateUser(email, password);
+    if(role && user.role!== role) {
+      throw new UnauthorizedException('Invalid role');
+    }
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
